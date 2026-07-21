@@ -1,0 +1,608 @@
+{
+  "id": "fifa-world-cup-26",
+  "name": "FIFA World Cup 26",
+  "sections": [
+    {
+      "id": "argelia",
+      "name": "Argélia",
+      "aliases": [
+        "argelia",
+        "algeria"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "argentina",
+      "name": "Argentina",
+      "aliases": [
+        "argentina"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "australia",
+      "name": "Austrália",
+      "aliases": [
+        "australia"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "austria",
+      "name": "Áustria",
+      "aliases": [
+        "austria"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "belgica",
+      "name": "Bélgica",
+      "aliases": [
+        "belgica"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "bosnia-herzegovina",
+      "name": "Bósnia e Herzegovina",
+      "aliases": [
+        "bosnia",
+        "bosnia e herzegovina"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "brasil",
+      "name": "Brasil",
+      "aliases": [
+        "brasil",
+        "brazil",
+        "brasilia"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "canada",
+      "name": "Canadá",
+      "aliases": [
+        "canada"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "costa-do-marfim",
+      "name": "Costa do Marfim",
+      "aliases": [
+        "costa do marfim",
+        "marfim"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "rd-congo",
+      "name": "RD Congo",
+      "aliases": [
+        "rd congo",
+        "congo",
+        "republica democratica do congo"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "colombia",
+      "name": "Colômbia",
+      "aliases": [
+        "colombia"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "cabo-verde",
+      "name": "Cabo Verde",
+      "aliases": [
+        "cabo verde"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "croacia",
+      "name": "Croácia",
+      "aliases": [
+        "croacia"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "curacao",
+      "name": "Curaçao",
+      "aliases": [
+        "curacao"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "tchequia",
+      "name": "Tchéquia",
+      "aliases": [
+        "tchequia",
+        "republica tcheca"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "equador",
+      "name": "Equador",
+      "aliases": [
+        "equador"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "egito",
+      "name": "Egito",
+      "aliases": [
+        "egito"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "inglaterra",
+      "name": "Inglaterra",
+      "aliases": [
+        "inglaterra",
+        "england"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "espanha",
+      "name": "Espanha",
+      "aliases": [
+        "espanha",
+        "spain"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "franca",
+      "name": "França",
+      "aliases": [
+        "franca",
+        "france"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "alemanha",
+      "name": "Alemanha",
+      "aliases": [
+        "alemanha",
+        "germany"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "gana",
+      "name": "Gana",
+      "aliases": [
+        "gana",
+        "ghana"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "haiti",
+      "name": "Haiti",
+      "aliases": [
+        "haiti"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "ira",
+      "name": "Irã",
+      "aliases": [
+        "ira",
+        "iran"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "iraque",
+      "name": "Iraque",
+      "aliases": [
+        "iraque",
+        "iraq"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "jordania",
+      "name": "Jordânia",
+      "aliases": [
+        "jordania",
+        "jordan"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "japao",
+      "name": "Japão",
+      "aliases": [
+        "japao",
+        "japan"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "coreia-do-sul",
+      "name": "Coreia do Sul",
+      "aliases": [
+        "coreia",
+        "coreia do sul",
+        "south korea"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "arabia-saudita",
+      "name": "Arábia Saudita",
+      "aliases": [
+        "arabia saudita",
+        "arabia",
+        "saudi arabia"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "marrocos",
+      "name": "Marrocos",
+      "aliases": [
+        "marrocos",
+        "morocco"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "mexico",
+      "name": "México",
+      "aliases": [
+        "mexico"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "paises-baixos",
+      "name": "Países Baixos",
+      "aliases": [
+        "paises baixos",
+        "holanda",
+        "netherlands"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "noruega",
+      "name": "Noruega",
+      "aliases": [
+        "noruega",
+        "norway"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "nova-zelandia",
+      "name": "Nova Zelândia",
+      "aliases": [
+        "nova zelandia",
+        "new zealand"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "panama",
+      "name": "Panamá",
+      "aliases": [
+        "panama"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "paraguai",
+      "name": "Paraguai",
+      "aliases": [
+        "paraguai",
+        "paraguay"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "portugal",
+      "name": "Portugal",
+      "aliases": [
+        "portugal"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "catar",
+      "name": "Catar",
+      "aliases": [
+        "catar",
+        "qatar"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "africa-do-sul",
+      "name": "África do Sul",
+      "aliases": [
+        "africa do sul",
+        "south africa"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "escocia",
+      "name": "Escócia",
+      "aliases": [
+        "escocia",
+        "scotland"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "senegal",
+      "name": "Senegal",
+      "aliases": [
+        "senegal"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "suica",
+      "name": "Suíça",
+      "aliases": [
+        "suica",
+        "switzerland"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "suecia",
+      "name": "Suécia",
+      "aliases": [
+        "suecia",
+        "sweden"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "tunisia",
+      "name": "Tunísia",
+      "aliases": [
+        "tunisia"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "turquia",
+      "name": "Turquia",
+      "aliases": [
+        "turquia",
+        "turkiye",
+        "turkey"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "uruguai",
+      "name": "Uruguai",
+      "aliases": [
+        "uruguai",
+        "uruguay"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "estados-unidos",
+      "name": "Estados Unidos",
+      "aliases": [
+        "estados unidos",
+        "eua",
+        "usa",
+        "united states"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "uzbequistao",
+      "name": "Uzbequistão",
+      "aliases": [
+        "uzbequistao",
+        "uzbekistan"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "coca-cola",
+      "name": "Coca-Cola",
+      "aliases": [
+        "coca cola",
+        "coca-cola"
+      ],
+      "numberRange": [
+        1,
+        14
+      ]
+    },
+    {
+      "id": "especiais",
+      "name": "Especiais",
+      "aliases": [
+        "especiais",
+        "especial"
+      ],
+      "numberRange": [
+        1,
+        19
+      ]
+    },
+    {
+      "id": "intro",
+      "name": "Introdução",
+      "aliases": [
+        "introducao",
+        "intro"
+      ],
+      "numbers": [
+        0
+      ]
+    }
+  ]
+}
