@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { applyParsedCommands, createEmptyCollection, isOwned, migrateLegacyCollection, progressForAlbum, toggleOwned } from "../src/js/collection.js";
+import { buildWhatsAppShareUrl, formatMissingStickersMessage, missingStickerGroups, missingStickersShare } from "../src/js/export.js";
 import { buildAlbumIndex, parseStickerCommands } from "../src/js/parser.js";
 
 const album = JSON.parse(await readFile(new URL("../src/data/album.json", import.meta.url), "utf8"));
@@ -80,8 +81,43 @@ test("migra quantidades antigas para figurinhas possuidas", () => {
   assert.deepEqual(migrated.ownedStickerIds.sort(), ["argentina-8", "brasil-12"]);
 });
 
-// Matriz de estresse da gramatica de ditado.
+test("calcula figurinhas faltantes agrupadas por selecao", () => {
+  const collection = register(createEmptyCollection(album.id), "Brasil 1 2 3").collection;
+  const groups = missingStickerGroups(albumIndex, collection);
+  const brasil = groups.find((group) => group.section.id === "brasil");
 
+  assert.equal(brasil.numbers.includes(1), false);
+  assert.equal(brasil.numbers.includes(2), false);
+  assert.equal(brasil.numbers.includes(3), false);
+  assert.equal(brasil.numbers.includes(4), true);
+});
+
+test("formata mensagem de figurinhas faltantes para compartilhamento", () => {
+  const collection = {
+    ...createEmptyCollection(album.id),
+    ownedStickerIds: [...albumIndex.stickersById.keys()].filter((id) => id !== "brasil-1" && id !== "argentina-5")
+  };
+  const message = formatMissingStickersMessage(albumIndex, collection);
+
+  assert.equal(message.includes("Figurinhas faltantes - FIFA World Cup 26"), true);
+  assert.equal(message.includes("Brasil: 1"), true);
+  assert.equal(message.includes("Argentina: 5"), true);
+  assert.equal(message.includes("Total: 2 faltantes"), true);
+});
+
+test("gera link do WhatsApp com mensagem codificada", () => {
+  const url = buildWhatsAppShareUrl("Brasil: 1, 2\nTotal: 2 faltantes");
+
+  assert.equal(url, "https://wa.me/?text=Brasil%3A%201%2C%202%0ATotal%3A%202%20faltantes");
+});
+
+test("informa album completo quando nao ha faltantes", () => {
+  const collection = { ...createEmptyCollection(album.id), ownedStickerIds: [...albumIndex.stickersById.keys()] };
+  const share = missingStickersShare(albumIndex, collection);
+
+  assert.equal(share.total, 0);
+  assert.equal(share.message, "Album completo - FIFA World Cup 26");
+});
 // Matriz de estresse da gramatica de ditado.
 function validIds(input) {
   return parseStickerCommands(input, albumIndex).filter((command) => command.status === "valid").map((command) => command.sticker.id);

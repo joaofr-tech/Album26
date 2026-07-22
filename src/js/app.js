@@ -1,4 +1,5 @@
 import { applyParsedCommands, isOwned, progressBySection, progressForAlbum, toggleOwned } from "./collection.js";
+import { missingStickersShare } from "./export.js";
 import { buildAlbumIndex, parseStickerCommands } from "./parser.js";
 import { loadCollection, saveCollection } from "./storage.js";
 
@@ -7,6 +8,7 @@ const elements = {
   progressSummary: document.querySelector("#progressSummary"),
   entryForm: document.querySelector("#entryForm"),
   commandInput: document.querySelector("#commandInput"),
+  exportMissingButton: document.querySelector("#exportMissingButton"),
   resultPanel: document.querySelector("#resultPanel"),
   homeView: document.querySelector("#homeView"),
   selectionCards: document.querySelector("#selectionCards"),
@@ -30,6 +32,7 @@ async function init() {
   collection = loadCollection(albumIndex);
   elements.albumName.textContent = albumIndex.album.name;
   elements.entryForm.addEventListener("submit", handleRegister);
+  elements.exportMissingButton.addEventListener("click", handleExportMissing);
   elements.detailBackButton.addEventListener("click", showHome);
   render();
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
@@ -50,6 +53,18 @@ function handleRegister(event) {
   }
   renderResults(applied.results);
   render();
+}
+
+function handleExportMissing() {
+  const share = missingStickersShare(albumIndex, collection);
+  if (share.total === 0) {
+    renderResults([{ status: "manual", message: "Album completo. Nenhuma figurinha faltante para exportar." }]);
+    return;
+  }
+
+  const opened = window.open(share.url, "_blank", "noopener");
+  if (!opened) window.location.href = share.url;
+  renderResults([{ status: "manual", message: `${share.total} figurinhas faltantes prontas para enviar no WhatsApp.` }]);
 }
 
 function showSection(sectionId) {
