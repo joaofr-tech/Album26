@@ -32,6 +32,13 @@ test("interpreta 10h12 como dois numeros da mesma selecao", () => {
   assert.equal(isOwned(result.collection, "canada-12"), true);
 });
 
+test("ignora h residual depois de um numero ditado", () => {
+  const result = register(createEmptyCollection(album.id), "Canada 8, 12h e 16");
+  assert.equal(isOwned(result.collection, "canada-8"), true);
+  assert.equal(isOwned(result.collection, "canada-12"), true);
+  assert.equal(isOwned(result.collection, "canada-16"), true);
+});
+
 test("nao trata dois-pontos como separador", () => {
   const parsed = parseStickerCommands("Canada 10:12", albumIndex);
   assert.equal(parsed.length, 1);
