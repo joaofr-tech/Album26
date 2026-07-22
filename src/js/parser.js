@@ -241,8 +241,13 @@ export function parseStickerCommands(input, albumIndex) {
     const withDigits = numberWordsToDigits(rawPart, albumIndex.maxNumber);
     const tokens = removeAuxiliaryWords(withDigits.split(/\s+/).filter(Boolean));
     const sectionMatch = findSection(tokens, albumIndex);
-    const section = sectionMatch?.section || activeSection;
     const number = firstNumber(tokens);
+    const isNumericContinuation =
+      !sectionMatch &&
+      activeSection &&
+      tokens.length > 0 &&
+      tokens.every((token) => /^\d+$/.test(token));
+    const section = sectionMatch?.section || (isNumericContinuation ? activeSection : null);
 
     if (sectionMatch?.section) {
       activeSection = sectionMatch.section;

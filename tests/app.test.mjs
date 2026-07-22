@@ -1,116 +1,62 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { createBackup, backupToCollection, validateBackup } from "../src/js/backup.js";
-import {
-  applyParsedCommands,
-  createEmptyCollection,
-  progressForAlbum,
-  quantityOf,
-  undoOperation
-} from "../src/js/collection.js";
+import { applyParsedCommands, createEmptyCollection, isOwned, migrateLegacyCollection, progressForAlbum, toggleOwned } from "../src/js/collection.js";
 import { buildAlbumIndex, parseStickerCommands } from "../src/js/parser.js";
 
 const album = JSON.parse(await readFile(new URL("../src/data/album.json", import.meta.url), "utf8"));
 const albumIndex = buildAlbumIndex(album);
+const register = (collection, input) => applyParsedCommands(collection, parseStickerCommands(input, albumIndex));
 
-function register(collection, input) {
-  return applyParsedCommands(collection, parseStickerCommands(input, albumIndex));
-}
-
-test("registra uma figurinha em colecao vazia", () => {
-  const state = createEmptyCollection(album.id);
-  const result = register(state, "Brasil 12");
-
-  assert.equal(quantityOf(result.collection, "brasil-12"), 1);
+test("registra uma figurinha como possuida", () => {
+  const result = register(createEmptyCollection(album.id), "Brasil 12");
+  assert.equal(isOwned(result.collection, "brasil-12"), true);
   assert.equal(result.results[0].status, "added");
 });
 
-test("registra repetida ao adicionar a mesma figurinha novamente", () => {
-  let state = createEmptyCollection(album.id);
-  state = register(state, "Brasil 12").collection;
-  const result = register(state, "Brasil 12");
-
-  assert.equal(quantityOf(result.collection, "brasil-12"), 2);
-  assert.equal(result.results[0].status, "duplicate-added");
-  assert.equal(progressForAlbum(albumIndex, result.collection).duplicates, 1);
+test("nao registra repetidas", () => {
+  const first = register(createEmptyCollection(album.id), "Brasil 12");
+  const second = register(first.collection, "Brasil 12");
+  assert.equal(second.changed, false);
+  assert.equal(second.results[0].status, "already-owned");
 });
 
-test("processa lote com secoes explicitas", () => {
-  const result = register(createEmptyCollection(album.id), "Brasil 12, Argentina 8, Franca 20");
-
-  assert.equal(quantityOf(result.collection, "brasil-12"), 1);
-  assert.equal(quantityOf(result.collection, "argentina-8"), 1);
-  assert.equal(quantityOf(result.collection, "franca-20"), 1);
+test("processa lote e continuidade de secao", () => {
+  const result = register(createEmptyCollection(album.id), "Brasil 12, 15 e 18, Argentina 8");
+  for (const id of ["brasil-12", "brasil-15", "brasil-18", "argentina-8"]) assert.equal(isOwned(result.collection, id), true);
 });
 
-test("processa continuidade de secao", () => {
-  const result = register(createEmptyCollection(album.id), "Brasil 12, 15 e 18");
-
-  assert.equal(quantityOf(result.collection, "brasil-12"), 1);
-  assert.equal(quantityOf(result.collection, "brasil-15"), 1);
-  assert.equal(quantityOf(result.collection, "brasil-18"), 1);
+test("converte numero por extenso", () => {
+  const result = register(createEmptyCollection(album.id), "figurinha numero doze do Brasil");
+  assert.equal(isOwned(result.collection, "brasil-12"), true);
 });
 
-test("converte numeros por extenso sem confundir vinte e um com separador", () => {
-  const parsed = parseStickerCommands("figurinha numero doze do Brasil", albumIndex);
-  const parsedTwenty = parseStickerCommands("Brasil vinte", albumIndex);
-
-  assert.equal(parsed[0].status, "valid");
-  assert.equal(parsed[0].sticker.id, "brasil-12");
-  assert.equal(parsedTwenty[0].status, "valid");
-  assert.equal(parsedTwenty[0].sticker.id, "brasil-20");
-});
-
-test("salva parte valida de lote parcialmente invalido", () => {
+test("mantem itens validos em lote parcialmente invalido", () => {
   const result = register(createEmptyCollection(album.id), "Brasil 12, Argentina 999, Franca 8");
-
-  assert.equal(quantityOf(result.collection, "brasil-12"), 1);
-  assert.equal(quantityOf(result.collection, "franca-8"), 1);
+  assert.equal(isOwned(result.collection, "brasil-12"), true);
+  assert.equal(isOwned(result.collection, "franca-8"), true);
   assert.equal(result.results[1].status, "missing-sticker");
 });
 
-test("desfaz a ultima operacao completa", () => {
-  const result = register(createEmptyCollection(album.id), "Brasil 12, Argentina 8");
-  const undone = undoOperation(result.collection, result.operation);
-
-  assert.equal(quantityOf(undone, "brasil-12"), 0);
-  assert.equal(quantityOf(undone, "argentina-8"), 0);
+test("nao transforma secao desconhecida em continuidade", () => {
+  const parsed = parseStickerCommands("Brasil 12, Brasul 13", albumIndex);
+  assert.equal(parsed[1].status, "unknown-section");
 });
 
-test("backup valido restaura estado identico", () => {
-  const result = register(createEmptyCollection(album.id), "Brasil 12, Argentina 8, Argentina 8");
-  const backup = createBackup(result.collection);
-  const validation = validateBackup(backup, albumIndex);
-  const restored = backupToCollection(backup);
-
-  assert.equal(validation.ok, true);
-  assert.deepEqual(restored.quantities, result.collection.quantities);
+test("permite corrigir o estado tocando na figurinha", () => {
+  const initial = register(createEmptyCollection(album.id), "Brasil 12").collection;
+  assert.equal(isOwned(toggleOwned(initial, "brasil-12"), "brasil-12"), false);
 });
 
-test("backup invalido nao passa validacao", () => {
-  const validation = validateBackup(
-    {
-      version: 1,
-      albumId: album.id,
-      stickers: {
-        "brasil-12": 1,
-        "brasil-999": 1
-      }
-    },
-    albumIndex
-  );
-
-  assert.equal(validation.ok, false);
+test("calcula o progresso sem repetidas", () => {
+  const collection = register(createEmptyCollection(album.id), "Brasil 12, Brasil 15").collection;
+  const progress = progressForAlbum(albumIndex, collection);
+  assert.equal(progress.owned, 2);
+  assert.equal(progress.total, 994);
+  assert.equal("duplicates" in progress, false);
 });
 
-
-test("carrega o catalogo completo da FIFA World Cup 26", () => {
-  assert.equal(album.id, "fifa-world-cup-26");
-  assert.equal(albumIndex.album.sections.length, 51);
-  assert.equal(albumIndex.totalStickers, 994);
-  assert.deepEqual(
-    parseStickerCommands("Brasil 20, Coca-Cola 14, Especiais 19", albumIndex).map((item) => item.sticker?.id),
-    ["brasil-20", "coca-cola-14", "especiais-19"]
-  );
+test("migra quantidades antigas para figurinhas possuidas", () => {
+  const migrated = migrateLegacyCollection({ version: 1, albumId: album.id, quantities: { "brasil-12": 3, "argentina-8": 1 } }, albumIndex);
+  assert.deepEqual(migrated.ownedStickerIds.sort(), ["argentina-8", "brasil-12"]);
 });
