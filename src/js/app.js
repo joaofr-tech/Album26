@@ -62,9 +62,8 @@ function handleExportMissing() {
     return;
   }
 
-  const opened = window.open(share.url, "_blank", "noopener");
-  if (!opened) window.location.href = share.url;
   renderResults([{ status: "manual", message: `${share.total} figurinhas faltantes prontas para enviar no WhatsApp.` }]);
+  window.location.href = share.url;
 }
 
 function showSection(sectionId) {

@@ -12,6 +12,29 @@ export function missingStickerGroups(albumIndex, collection) {
   return [...groupsBySection.values()];
 }
 
+export function formatNumberRanges(numbers) {
+  const sorted = [...numbers].sort((left, right) => left - right);
+  const ranges = [];
+  let start = null;
+  let previous = null;
+
+  for (const number of sorted) {
+    if (start === null) {
+      start = number;
+      previous = number;
+    } else if (number === previous + 1) {
+      previous = number;
+    } else {
+      ranges.push(formatRange(start, previous));
+      start = number;
+      previous = number;
+    }
+  }
+
+  if (start !== null) ranges.push(formatRange(start, previous));
+  return ranges.join(", ");
+}
+
 export function formatMissingStickersMessage(albumIndex, collection) {
   const groups = missingStickerGroups(albumIndex, collection);
   const total = groups.reduce((sum, group) => sum + group.numbers.length, 0);
@@ -21,7 +44,7 @@ export function formatMissingStickersMessage(albumIndex, collection) {
   return [
     `Figurinhas faltantes - ${albumIndex.album.name}`,
     "",
-    ...groups.map((group) => `${group.section.name}: ${group.numbers.join(", ")}`),
+    ...groups.map((group) => `${group.section.name}: ${formatNumberRanges(group.numbers)}`),
     "",
     `Total: ${total} faltantes`
   ].join("\n");
@@ -42,4 +65,8 @@ export function missingStickersShare(albumIndex, collection) {
     message,
     url: buildWhatsAppShareUrl(message)
   };
+}
+
+function formatRange(start, end) {
+  return start === end ? String(start) : `${start}-${end}`;
 }

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { applyParsedCommands, createEmptyCollection, isOwned, migrateLegacyCollection, progressForAlbum, toggleOwned } from "../src/js/collection.js";
-import { buildWhatsAppShareUrl, formatMissingStickersMessage, missingStickerGroups, missingStickersShare } from "../src/js/export.js";
+import { buildWhatsAppShareUrl, formatMissingStickersMessage, formatNumberRanges, missingStickerGroups, missingStickersShare } from "../src/js/export.js";
 import { buildAlbumIndex, parseStickerCommands } from "../src/js/parser.js";
 
 const album = JSON.parse(await readFile(new URL("../src/data/album.json", import.meta.url), "utf8"));
@@ -92,6 +92,9 @@ test("calcula figurinhas faltantes agrupadas por selecao", () => {
   assert.equal(brasil.numbers.includes(4), true);
 });
 
+test("compacta sequencias de numeros faltantes", () => {
+  assert.equal(formatNumberRanges([1, 2, 3, 5, 7, 8]), "1-3, 5, 7-8");
+});
 test("formata mensagem de figurinhas faltantes para compartilhamento", () => {
   const collection = {
     ...createEmptyCollection(album.id),
@@ -111,6 +114,13 @@ test("gera link do WhatsApp com mensagem codificada", () => {
   assert.equal(url, "https://wa.me/?text=Brasil%3A%201%2C%202%0ATotal%3A%202%20faltantes");
 });
 
+test("mantem link do WhatsApp compacto quando ha muitas faltantes", () => {
+  const share = missingStickersShare(albumIndex, createEmptyCollection(album.id));
+
+  assert.equal(share.total, 994);
+  assert.equal(share.message.includes("Brasil: 1-20"), true);
+  assert.equal(share.url.length < 4000, true);
+});
 test("informa album completo quando nao ha faltantes", () => {
   const collection = { ...createEmptyCollection(album.id), ownedStickerIds: [...albumIndex.stickersById.keys()] };
   const share = missingStickersShare(albumIndex, collection);

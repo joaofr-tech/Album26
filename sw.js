@@ -1,4 +1,4 @@
-const CACHE_NAME = "fifa-world-cup-26-v7";
+const CACHE_NAME = "fifa-world-cup-26-v8";
 const APP_SHELL = [
   "./index.html",
   "./manifest.webmanifest",
@@ -39,18 +39,13 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith(
-    caches.open(CACHE_NAME).then((cache) => cache.match(event.request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(event.request)
-        .then((response) => {
-          if (response.ok && !response.redirected && response.type === "basic") {
-            const copy = response.clone();
-            event.waitUntil(cache.put(event.request, copy));
-          }
-          return response;
-        })
-        .catch(() => Response.error());
-    }))
+    caches.open(CACHE_NAME).then((cache) => fetch(event.request)
+      .then((response) => {
+        if (response.ok && !response.redirected && response.type === "basic") {
+          event.waitUntil(cache.put(event.request, response.clone()));
+        }
+        return response;
+      })
+      .catch(() => cache.match(event.request).then((cached) => cached || Response.error())))
   );
 });
