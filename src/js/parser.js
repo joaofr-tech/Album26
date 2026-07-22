@@ -171,6 +171,7 @@ export function buildAlbumIndex(album) {
 
 function splitRawCommands(input) {
   return normalizeText(input)
+    .replace(/(\d+)\s*h\s*(\d+)/g, "$1|$2")
     .replace(/[.;,\n\r]+/g, "|")
     .split("|")
     .map((part) => part.trim())

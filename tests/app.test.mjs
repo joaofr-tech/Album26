@@ -26,6 +26,18 @@ test("processa lote e continuidade de secao", () => {
   for (const id of ["brasil-12", "brasil-15", "brasil-18", "argentina-8"]) assert.equal(isOwned(result.collection, id), true);
 });
 
+test("interpreta 10h12 como dois numeros da mesma selecao", () => {
+  const result = register(createEmptyCollection(album.id), "Canada 10h12");
+  assert.equal(isOwned(result.collection, "canada-10"), true);
+  assert.equal(isOwned(result.collection, "canada-12"), true);
+});
+
+test("nao trata dois-pontos como separador", () => {
+  const parsed = parseStickerCommands("Canada 10:12", albumIndex);
+  assert.equal(parsed.length, 1);
+  assert.equal(parsed[0].status, "missing-number");
+});
+
 test("converte numero por extenso", () => {
   const result = register(createEmptyCollection(album.id), "figurinha numero doze do Brasil");
   assert.equal(isOwned(result.collection, "brasil-12"), true);
