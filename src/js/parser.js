@@ -142,6 +142,7 @@ export function buildAlbumIndex(album) {
   const indexedAlbum = materializeAlbum(album);
   const sections = new Map();
   const sectionsByAlias = new Map();
+  const sectionAliases = [];
   const stickersById = new Map();
   const stickersBySectionAndNumber = new Map();
 
@@ -150,6 +151,8 @@ export function buildAlbumIndex(album) {
     const aliases = new Set([section.name, section.id, ...(section.aliases || [])]);
     for (const alias of aliases) {
       sectionsByAlias.set(slugify(alias), section);
+      const tokens = normalizeText(alias).split(/\s+/).filter(Boolean);
+      sectionAliases.push({ section, tokens, compact: tokens.join("") });
     }
 
     for (const sticker of section.stickers) {
@@ -162,6 +165,7 @@ export function buildAlbumIndex(album) {
     album: indexedAlbum,
     sections,
     sectionsByAlias,
+    sectionAliases: sectionAliases.sort((left, right) => right.tokens.length - left.tokens.length),
     stickersById,
     stickersBySectionAndNumber,
     totalStickers: stickersById.size,
@@ -169,132 +173,105 @@ export function buildAlbumIndex(album) {
   };
 }
 
-function splitRawCommands(input) {
-  return normalizeText(input)
-    .replace(/(\d+)\s*h\s*(\d+)/g, "$1|$2")
-    .replace(/(\d+)\s*h\b/g, "$1")
-    .replace(/[.;,\n\r]+/g, "|")
-    .split("|")
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .flatMap(splitByLooseAnd);
-}
+function tokenizeInput(input, maxNumber) {
+  const text = numberWordsToDigits(normalizeText(input).replace(/[.;,\n\r]+/g, " "), maxNumber);
 
-function splitByLooseAnd(part) {
-  const tokens = part.split(/\s+/);
-  const groups = [[]];
-
-  for (let index = 0; index < tokens.length; index += 1) {
-    const token = tokens[index];
-    const previous = tokens[index - 1];
-    const next = tokens[index + 1];
-    const isNumberWordJoin =
-      token === "e" && TENS_WORDS.has(previous) && (UNIT_WORDS.has(next) || TEEN_WORDS.has(next));
-
-    if (token === "e" && !isNumberWordJoin) {
-      groups.push([]);
-    } else {
-      groups[groups.length - 1].push(token);
+  return text.split(/\s+/).filter(Boolean).flatMap((token) => {
+    if (/^\d+:\d+$/.test(token)) return [{ type: "invalid", value: token }];
+    if (/^\d+(?:h\d+)+$/.test(token) || /^h\d+(?:h\d+)*$/.test(token)) {
+      return token.split(/(h)/).filter(Boolean).map((value) => (/^\d+$/.test(value) ? { type: "number", value: Number(value) } : { type: "separator", value }));
     }
-  }
-
-  return groups.map((group) => group.join(" ").trim()).filter(Boolean);
+    if (/^\d+h$/.test(token)) return [{ type: "number", value: Number(token.slice(0, -1)) }, { type: "separator", value: "h" }];
+    if (/^\d+$/.test(token)) return [{ type: "number", value: Number(token) }];
+    if (/^[a-z]+$/.test(token)) return [{ type: "word", value: token }];
+    return [{ type: "invalid", value: token }];
+  });
 }
 
-function removeAuxiliaryWords(tokens) {
-  return tokens.filter((token) => !AUXILIARY_WORDS.has(token));
-}
+function findSectionAt(tokens, start, index) {
+  for (const candidate of index.sectionAliases) {
+    let compact = "";
 
-function findSection(tokens, index) {
-  let best = null;
+    for (let position = start; position < tokens.length; position += 1) {
+      const current = tokens[position];
+      if (current?.type !== "word") break;
 
-  for (const [alias, section] of index.sectionsByAlias.entries()) {
-    const aliasTokens = alias.split("-").filter(Boolean);
-    for (let start = 0; start <= tokens.length - aliasTokens.length; start += 1) {
-      const candidate = tokens.slice(start, start + aliasTokens.length).map(slugify);
-      if (candidate.join("-") === alias) {
-        const score = aliasTokens.length;
-        if (!best || score > best.score) {
-          best = { section, start, end: start + aliasTokens.length, score };
-        }
-      }
-    }
-  }
-
-  return best;
-}
-
-function firstNumber(tokens) {
-  for (const token of tokens) {
-    if (/^\d+$/.test(token)) {
-      return Number(token);
+      compact += current.value;
+      if (compact === candidate.compact) return { ...candidate, length: position - start + 1 };
+      if (!candidate.compact.startsWith(compact)) break;
     }
   }
 
   return null;
 }
 
+function isIgnorable(token) {
+  return token.type === "separator" || (token.type === "word" && (AUXILIARY_WORDS.has(token.value) || token.value === "e" || token.value === "h"));
+}
+
 export function parseStickerCommands(input, albumIndex) {
-  const parts = splitRawCommands(input);
+  const tokens = tokenizeInput(input, albumIndex.maxNumber);
   const results = [];
   let activeSection = null;
+  let activeSectionHasNumber = false;
+  let pendingNumbers = [];
+  let pendingNumbersAreSafe = true;
+  let unknownWordRun = false;
 
-  for (const rawPart of parts) {
-    const withDigits = numberWordsToDigits(rawPart, albumIndex.maxNumber);
-    const tokens = removeAuxiliaryWords(withDigits.split(/\s+/).filter(Boolean));
-    const sectionMatch = findSection(tokens, albumIndex);
-    const number = firstNumber(tokens);
-    const isNumericContinuation =
-      !sectionMatch &&
-      activeSection &&
-      tokens.length > 0 &&
-      tokens.every((token) => /^\d+$/.test(token));
-    const section = sectionMatch?.section || (isNumericContinuation ? activeSection : null);
-
-    if (sectionMatch?.section) {
-      activeSection = sectionMatch.section;
-    }
-
-    if (!section) {
-      results.push({
-        status: "unknown-section",
-        raw: rawPart,
-        message: `Nao foi possivel identificar a secao "${rawPart}".`
-      });
-      continue;
-    }
-
-    if (number === null) {
-      results.push({
-        status: "missing-number",
-        raw: rawPart,
-        section,
-        message: `Nenhum numero foi identificado em "${rawPart}".`
-      });
-      continue;
-    }
-
+  const addNumber = (section, number, raw) => {
+    activeSectionHasNumber = true;
     const sticker = albumIndex.stickersBySectionAndNumber.get(`${section.id}:${number}`);
     if (!sticker) {
-      results.push({
-        status: "missing-sticker",
-        raw: rawPart,
-        section,
-        number,
-        message: `${section.name} ${number} nao existe neste album.`
-      });
+      results.push({ status: "missing-sticker", raw, section, number, message: `${section.name} ${number} nao existe neste album.` });
+      return;
+    }
+    results.push({ status: "valid", raw, section, number, sticker, message: `${section.name} ${number}` });
+  };
+
+  const reportMissingNumber = (section, raw) => {
+    results.push({ status: "missing-number", raw, section, message: `Nenhum numero foi identificado em "${raw}".` });
+  };
+
+  for (let position = 0; position < tokens.length;) {
+    const sectionMatch = findSectionAt(tokens, position, albumIndex);
+    if (sectionMatch) {
+      if (activeSection && !activeSectionHasNumber) reportMissingNumber(activeSection, activeSection.name);
+      const numbersBeforeSection = !activeSection && pendingNumbersAreSafe ? pendingNumbers : [];
+      activeSection = sectionMatch.section;
+      activeSectionHasNumber = false;
+      pendingNumbers = [];
+      pendingNumbersAreSafe = true;
+      unknownWordRun = false;
+      for (const number of numbersBeforeSection) addNumber(activeSection, number, String(number));
+      position += sectionMatch.length;
       continue;
     }
 
-    results.push({
-      status: "valid",
-      raw: rawPart,
-      section,
-      number,
-      sticker,
-      message: `${section.name} ${number}`
-    });
+    const token = tokens[position];
+    if (token.type === "number") {
+      if (activeSection) addNumber(activeSection, token.value, String(token.value));
+      else if (pendingNumbersAreSafe) pendingNumbers.push(token.value);
+      position += 1;
+      continue;
+    }
+
+    if (isIgnorable(token)) {
+      position += 1;
+      continue;
+    }
+
+    if (token.type === "invalid" && activeSection) reportMissingNumber(activeSection, token.value);
+    activeSection = null;
+    activeSectionHasNumber = false;
+    pendingNumbers = [];
+    pendingNumbersAreSafe = false;
+    if (token.type === "word" && !unknownWordRun) {
+      results.push({ status: "unknown-section", raw: token.value, message: `Nao foi possivel identificar a secao "${token.value}".` });
+      unknownWordRun = true;
+    }
+    position += 1;
   }
 
+  if (activeSection && !activeSectionHasNumber) reportMissingNumber(activeSection, activeSection.name);
   return results;
 }

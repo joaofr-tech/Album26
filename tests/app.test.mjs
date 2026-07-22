@@ -79,3 +79,78 @@ test("migra quantidades antigas para figurinhas possuidas", () => {
   const migrated = migrateLegacyCollection({ version: 1, albumId: album.id, quantities: { "brasil-12": 3, "argentina-8": 1 } }, albumIndex);
   assert.deepEqual(migrated.ownedStickerIds.sort(), ["argentina-8", "brasil-12"]);
 });
+
+// Matriz de estresse da gramatica de ditado.
+
+// Matriz de estresse da gramatica de ditado.
+function validIds(input) {
+  return parseStickerCommands(input, albumIndex).filter((command) => command.status === "valid").map((command) => command.sticker.id);
+}
+
+function assertValidIds(input, expected) {
+  assert.deepEqual(validIds(input), expected);
+}
+
+const allSections = [...albumIndex.sections.values()];
+for (const section of allSections) {
+  test(`gramatica: lista sem pontuacao para ${section.name}`, () => {
+    const numbers = [...new Set([section.stickers[0].number, section.stickers[Math.floor(section.stickers.length / 2)].number, section.stickers.at(-1).number])];
+    assertValidIds(`${section.name} ${numbers.join(" ")}`, numbers.map((number) => `${section.id}-${number}`));
+  });
+}
+
+for (const separator of [",", ", ", ".", "\n", " e ", " ", "h", " h "]) {
+  test(`gramatica: separador ${JSON.stringify(separator)} em uma selecao`, () => {
+    assertValidIds(`Brasil 8${separator}12${separator}16`, ["brasil-8", "brasil-12", "brasil-16"]);
+  });
+}
+
+for (const separator of [", ", ". ", "\n", " ", " e ", " h ", "; ", "  "]) {
+  test(`gramatica: troca de selecao com ${JSON.stringify(separator)}`, () => {
+    assertValidIds(`Franca 8 12 16${separator}Costa do Mar, fim 8 12 16`, ["franca-8", "franca-12", "franca-16", "costa-do-marfim-8", "costa-do-marfim-12", "costa-do-marfim-16"]);
+  });
+}
+
+for (const section of allSections.filter((candidate) => candidate.name.includes(" "))) {
+  const words = section.name.split(" ");
+  const head = words.slice(0, -1).join(" ");
+  const tail = words.at(-1);
+  const numbers = section.stickers.slice(0, 2).map((sticker) => sticker.number);
+  for (const separator of [", ", ". ", "\n"]) {
+    test(`gramatica: nome composto ${section.name} com ${JSON.stringify(separator)}`, () => {
+      assertValidIds(`${head}${separator}${tail} ${numbers.join(" ")}`, numbers.map((number) => `${section.id}-${number}`));
+    });
+  }
+}
+
+for (const scenario of [
+  ["Brasil oito doze dezesseis", ["brasil-8", "brasil-12", "brasil-16"]],
+  ["Brasil dez onze doze", ["brasil-10", "brasil-11", "brasil-12"]],
+  ["Brasil vinte", ["brasil-20"]],
+  ["Brasil oito, doze e dezesseis", ["brasil-8", "brasil-12", "brasil-16"]],
+  ["Brasil 8 doze 16", ["brasil-8", "brasil-12", "brasil-16"]],
+  ["figurinha numero oito doze do Brasil", ["brasil-8", "brasil-12"]]
+]) {
+  test(`gramatica: numero ditado ${scenario[0]}`, () => assertValidIds(scenario[0], scenario[1]));
+}
+
+for (const scenario of [
+  ["Brasil 8h12", ["brasil-8", "brasil-12"]],
+  ["Brasil 8 h 12", ["brasil-8", "brasil-12"]],
+  ["Brasil 8h e 12", ["brasil-8", "brasil-12"]],
+  ["Brasil 8 h, 12", ["brasil-8", "brasil-12"]],
+  ["Brasil 8h12h16", ["brasil-8", "brasil-12", "brasil-16"]]
+]) {
+  test(`gramatica: h em ${scenario[0]}`, () => assertValidIds(scenario[0], scenario[1]));
+}
+
+for (const scenario of [
+  ["8 12", []],
+  ["Brasil 8 Brasul 12", ["brasil-8"]],
+  ["Brasil 999 8", ["brasil-8"]],
+  ["Brasil 10:12", []],
+  ["Costa do Mar 8", []],
+  ["Brasil 8 xpto 12", ["brasil-8"]]
+]) {
+  test(`gramatica: entrada invalida ${scenario[0]}`, () => assertValidIds(scenario[0], scenario[1]));
+}
