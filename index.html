@@ -23,6 +23,12 @@
               <textarea id="commandInput" name="commands" rows="3" autocomplete="off" autocapitalize="sentences" placeholder="Brasil 12, Argentina 8, Fran&ccedil;a 20"></textarea>
               <button class="primary-action" type="submit">Registrar</button>
               <button class="secondary-action" id="exportMissingButton" type="button">Exportar faltantes</button>
+              <button class="secondary-action" id="checkListToggleButton" type="button">Conferir lista</button>
+            </form>
+            <form class="check-list-form" id="checkListForm" hidden>
+              <label for="checkListInput">Lista para conferir</label>
+              <textarea id="checkListInput" name="checklist" rows="4" autocomplete="off" autocapitalize="characters" placeholder="BRA 12, 14 15&#10;CC 1, 2"></textarea>
+              <button class="secondary-action" type="submit">Verificar lista</button>
             </form>
             <div class="result-panel" id="resultPanel" aria-live="polite"></div>
           </section>

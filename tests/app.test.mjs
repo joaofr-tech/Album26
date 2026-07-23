@@ -72,7 +72,7 @@ test("calcula o progresso sem repetidas", () => {
   const collection = register(createEmptyCollection(album.id), "Brasil 12, Brasil 15").collection;
   const progress = progressForAlbum(albumIndex, collection);
   assert.equal(progress.owned, 2);
-  assert.equal(progress.total, 994);
+  assert.equal(progress.total, 1014);
   assert.equal("duplicates" in progress, false);
 });
 
@@ -117,7 +117,7 @@ test("gera link do WhatsApp com mensagem codificada", () => {
 test("mantem link do WhatsApp compacto quando ha muitas faltantes", () => {
   const share = missingStickersShare(albumIndex, createEmptyCollection(album.id));
 
-  assert.equal(share.total, 994);
+  assert.equal(share.total, 1014);
   assert.equal(share.message.includes("Brasil: 1-20"), true);
   assert.equal(share.url.length < 4000, true);
 });

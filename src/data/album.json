@@ -7,7 +7,8 @@
       "name": "Argélia",
       "aliases": [
         "argelia",
-        "algeria"
+        "algeria",
+        "ALG"
       ],
       "numberRange": [
         1,
@@ -18,7 +19,8 @@
       "id": "argentina",
       "name": "Argentina",
       "aliases": [
-        "argentina"
+        "argentina",
+        "ARG"
       ],
       "numberRange": [
         1,
@@ -29,7 +31,8 @@
       "id": "australia",
       "name": "Austrália",
       "aliases": [
-        "australia"
+        "australia",
+        "AUS"
       ],
       "numberRange": [
         1,
@@ -40,7 +43,8 @@
       "id": "austria",
       "name": "Áustria",
       "aliases": [
-        "austria"
+        "austria",
+        "AUT"
       ],
       "numberRange": [
         1,
@@ -51,7 +55,8 @@
       "id": "belgica",
       "name": "Bélgica",
       "aliases": [
-        "belgica"
+        "belgica",
+        "BEL"
       ],
       "numberRange": [
         1,
@@ -63,7 +68,8 @@
       "name": "Bósnia e Herzegovina",
       "aliases": [
         "bosnia",
-        "bosnia e herzegovina"
+        "bosnia e herzegovina",
+        "BIH"
       ],
       "numberRange": [
         1,
@@ -76,7 +82,8 @@
       "aliases": [
         "brasil",
         "brazil",
-        "brasilia"
+        "brasilia",
+        "BRA"
       ],
       "numberRange": [
         1,
@@ -87,7 +94,8 @@
       "id": "canada",
       "name": "Canadá",
       "aliases": [
-        "canada"
+        "canada",
+        "CAN"
       ],
       "numberRange": [
         1,
@@ -99,7 +107,8 @@
       "name": "Costa do Marfim",
       "aliases": [
         "costa do marfim",
-        "marfim"
+        "marfim",
+        "CIV"
       ],
       "numberRange": [
         1,
@@ -112,7 +121,9 @@
       "aliases": [
         "rd congo",
         "congo",
-        "republica democratica do congo"
+        "republica democratica do congo",
+        "COD",
+        "DRC"
       ],
       "numberRange": [
         1,
@@ -123,7 +134,8 @@
       "id": "colombia",
       "name": "Colômbia",
       "aliases": [
-        "colombia"
+        "colombia",
+        "COL"
       ],
       "numberRange": [
         1,
@@ -134,7 +146,8 @@
       "id": "cabo-verde",
       "name": "Cabo Verde",
       "aliases": [
-        "cabo verde"
+        "cabo verde",
+        "CPV"
       ],
       "numberRange": [
         1,
@@ -145,7 +158,8 @@
       "id": "croacia",
       "name": "Croácia",
       "aliases": [
-        "croacia"
+        "croacia",
+        "CRO"
       ],
       "numberRange": [
         1,
@@ -156,7 +170,8 @@
       "id": "curacao",
       "name": "Curaçao",
       "aliases": [
-        "curacao"
+        "curacao",
+        "CUW"
       ],
       "numberRange": [
         1,
@@ -168,7 +183,8 @@
       "name": "Tchéquia",
       "aliases": [
         "tchequia",
-        "republica tcheca"
+        "republica tcheca",
+        "CZE"
       ],
       "numberRange": [
         1,
@@ -179,7 +195,8 @@
       "id": "equador",
       "name": "Equador",
       "aliases": [
-        "equador"
+        "equador",
+        "ECU"
       ],
       "numberRange": [
         1,
@@ -190,7 +207,8 @@
       "id": "egito",
       "name": "Egito",
       "aliases": [
-        "egito"
+        "egito",
+        "EGY"
       ],
       "numberRange": [
         1,
@@ -202,7 +220,8 @@
       "name": "Inglaterra",
       "aliases": [
         "inglaterra",
-        "england"
+        "england",
+        "ENG"
       ],
       "numberRange": [
         1,
@@ -214,7 +233,8 @@
       "name": "Espanha",
       "aliases": [
         "espanha",
-        "spain"
+        "spain",
+        "ESP"
       ],
       "numberRange": [
         1,
@@ -226,7 +246,8 @@
       "name": "França",
       "aliases": [
         "franca",
-        "france"
+        "france",
+        "FRA"
       ],
       "numberRange": [
         1,
@@ -238,7 +259,9 @@
       "name": "Alemanha",
       "aliases": [
         "alemanha",
-        "germany"
+        "germany",
+        "GER",
+        "DEU"
       ],
       "numberRange": [
         1,
@@ -250,7 +273,8 @@
       "name": "Gana",
       "aliases": [
         "gana",
-        "ghana"
+        "ghana",
+        "GHA"
       ],
       "numberRange": [
         1,
@@ -261,7 +285,8 @@
       "id": "haiti",
       "name": "Haiti",
       "aliases": [
-        "haiti"
+        "haiti",
+        "HAI"
       ],
       "numberRange": [
         1,
@@ -273,7 +298,8 @@
       "name": "Irã",
       "aliases": [
         "ira",
-        "iran"
+        "iran",
+        "IRN"
       ],
       "numberRange": [
         1,
@@ -285,7 +311,8 @@
       "name": "Iraque",
       "aliases": [
         "iraque",
-        "iraq"
+        "iraq",
+        "IRQ"
       ],
       "numberRange": [
         1,
@@ -297,7 +324,8 @@
       "name": "Jordânia",
       "aliases": [
         "jordania",
-        "jordan"
+        "jordan",
+        "JOR"
       ],
       "numberRange": [
         1,
@@ -309,7 +337,8 @@
       "name": "Japão",
       "aliases": [
         "japao",
-        "japan"
+        "japan",
+        "JPN"
       ],
       "numberRange": [
         1,
@@ -322,7 +351,8 @@
       "aliases": [
         "coreia",
         "coreia do sul",
-        "south korea"
+        "south korea",
+        "KOR"
       ],
       "numberRange": [
         1,
@@ -335,7 +365,9 @@
       "aliases": [
         "arabia saudita",
         "arabia",
-        "saudi arabia"
+        "saudi arabia",
+        "KSA",
+        "SAU"
       ],
       "numberRange": [
         1,
@@ -347,7 +379,8 @@
       "name": "Marrocos",
       "aliases": [
         "marrocos",
-        "morocco"
+        "morocco",
+        "MOR"
       ],
       "numberRange": [
         1,
@@ -358,7 +391,8 @@
       "id": "mexico",
       "name": "México",
       "aliases": [
-        "mexico"
+        "mexico",
+        "MEX"
       ],
       "numberRange": [
         1,
@@ -371,7 +405,8 @@
       "aliases": [
         "paises baixos",
         "holanda",
-        "netherlands"
+        "netherlands",
+        "NED"
       ],
       "numberRange": [
         1,
@@ -383,7 +418,8 @@
       "name": "Noruega",
       "aliases": [
         "noruega",
-        "norway"
+        "norway",
+        "NOR"
       ],
       "numberRange": [
         1,
@@ -395,7 +431,8 @@
       "name": "Nova Zelândia",
       "aliases": [
         "nova zelandia",
-        "new zealand"
+        "new zealand",
+        "NZL"
       ],
       "numberRange": [
         1,
@@ -406,7 +443,8 @@
       "id": "panama",
       "name": "Panamá",
       "aliases": [
-        "panama"
+        "panama",
+        "PAN"
       ],
       "numberRange": [
         1,
@@ -418,7 +456,8 @@
       "name": "Paraguai",
       "aliases": [
         "paraguai",
-        "paraguay"
+        "paraguay",
+        "PAR"
       ],
       "numberRange": [
         1,
@@ -429,7 +468,8 @@
       "id": "portugal",
       "name": "Portugal",
       "aliases": [
-        "portugal"
+        "portugal",
+        "POR"
       ],
       "numberRange": [
         1,
@@ -441,7 +481,8 @@
       "name": "Catar",
       "aliases": [
         "catar",
-        "qatar"
+        "qatar",
+        "QAT"
       ],
       "numberRange": [
         1,
@@ -453,7 +494,9 @@
       "name": "África do Sul",
       "aliases": [
         "africa do sul",
-        "south africa"
+        "south africa",
+        "RSA",
+        "ZAF"
       ],
       "numberRange": [
         1,
@@ -465,7 +508,8 @@
       "name": "Escócia",
       "aliases": [
         "escocia",
-        "scotland"
+        "scotland",
+        "SCO"
       ],
       "numberRange": [
         1,
@@ -476,7 +520,8 @@
       "id": "senegal",
       "name": "Senegal",
       "aliases": [
-        "senegal"
+        "senegal",
+        "SEN"
       ],
       "numberRange": [
         1,
@@ -488,7 +533,8 @@
       "name": "Suíça",
       "aliases": [
         "suica",
-        "switzerland"
+        "switzerland",
+        "SUI"
       ],
       "numberRange": [
         1,
@@ -500,7 +546,8 @@
       "name": "Suécia",
       "aliases": [
         "suecia",
-        "sweden"
+        "sweden",
+        "SWE"
       ],
       "numberRange": [
         1,
@@ -511,7 +558,8 @@
       "id": "tunisia",
       "name": "Tunísia",
       "aliases": [
-        "tunisia"
+        "tunisia",
+        "TUN"
       ],
       "numberRange": [
         1,
@@ -524,7 +572,8 @@
       "aliases": [
         "turquia",
         "turkiye",
-        "turkey"
+        "turkey",
+        "TUR"
       ],
       "numberRange": [
         1,
@@ -536,7 +585,8 @@
       "name": "Uruguai",
       "aliases": [
         "uruguai",
-        "uruguay"
+        "uruguay",
+        "URU"
       ],
       "numberRange": [
         1,
@@ -550,7 +600,9 @@
         "estados unidos",
         "eua",
         "usa",
-        "united states"
+        "united states",
+        "USA",
+        "EUA"
       ],
       "numberRange": [
         1,
@@ -562,7 +614,21 @@
       "name": "Uzbequistão",
       "aliases": [
         "uzbequistao",
-        "uzbekistan"
+        "uzbekistan",
+        "UZB"
+      ],
+      "numberRange": [
+        1,
+        20
+      ]
+    },
+    {
+      "id": "fwc",
+      "name": "FWC",
+      "aliases": [
+        "FWC",
+        "fifa world cup",
+        "world cup"
       ],
       "numberRange": [
         1,
@@ -574,7 +640,8 @@
       "name": "Coca-Cola",
       "aliases": [
         "coca cola",
-        "coca-cola"
+        "coca-cola",
+        "CC"
       ],
       "numberRange": [
         1,
@@ -586,7 +653,8 @@
       "name": "Especiais",
       "aliases": [
         "especiais",
-        "especial"
+        "especial",
+        "SPC"
       ],
       "numberRange": [
         1,
@@ -598,7 +666,8 @@
       "name": "Introdução",
       "aliases": [
         "introducao",
-        "intro"
+        "intro",
+        "INT"
       ],
       "numbers": [
         0

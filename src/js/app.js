@@ -1,5 +1,6 @@
 import { applyParsedCommands, isOwned, progressBySection, progressForAlbum, toggleOwned } from "./collection.js";
 import { missingStickersShare } from "./export.js";
+import { neededStickersResultRows, matchNeededStickers } from "./match-list.js";
 import { buildAlbumIndex, parseStickerCommands } from "./parser.js";
 import { loadCollection, saveCollection } from "./storage.js";
 
@@ -9,6 +10,9 @@ const elements = {
   entryForm: document.querySelector("#entryForm"),
   commandInput: document.querySelector("#commandInput"),
   exportMissingButton: document.querySelector("#exportMissingButton"),
+  checkListToggleButton: document.querySelector("#checkListToggleButton"),
+  checkListForm: document.querySelector("#checkListForm"),
+  checkListInput: document.querySelector("#checkListInput"),
   resultPanel: document.querySelector("#resultPanel"),
   homeView: document.querySelector("#homeView"),
   selectionCards: document.querySelector("#selectionCards"),
@@ -33,6 +37,8 @@ async function init() {
   elements.albumName.textContent = albumIndex.album.name;
   elements.entryForm.addEventListener("submit", handleRegister);
   elements.exportMissingButton.addEventListener("click", handleExportMissing);
+  elements.checkListToggleButton.addEventListener("click", handleCheckListToggle);
+  elements.checkListForm.addEventListener("submit", handleCheckListSubmit);
   elements.detailBackButton.addEventListener("click", showHome);
   render();
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
@@ -64,6 +70,23 @@ function handleExportMissing() {
 
   renderResults([{ status: "manual", message: `${share.total} figurinhas faltantes prontas para enviar no WhatsApp.` }]);
   window.location.href = share.url;
+}
+
+function handleCheckListToggle() {
+  elements.checkListForm.hidden = !elements.checkListForm.hidden;
+  elements.checkListToggleButton.setAttribute("aria-expanded", String(!elements.checkListForm.hidden));
+  if (!elements.checkListForm.hidden) elements.checkListInput.focus();
+}
+
+function handleCheckListSubmit(event) {
+  event.preventDefault();
+  const input = elements.checkListInput.value.trim();
+  if (!input) {
+    renderResults([{ status: "error", message: "Cole uma lista de figurinhas para conferir." }]);
+    return;
+  }
+
+  renderResults(neededStickersResultRows(matchNeededStickers(albumIndex, collection, input)));
 }
 
 function showSection(sectionId) {
@@ -139,7 +162,7 @@ function renderResults(results = []) {
 }
 
 function isExtraSection(section) {
-  return ["coca-cola", "especiais", "intro"].includes(section.id);
+  return ["fwc", "coca-cola", "especiais", "intro"].includes(section.id);
 }
 
 function formatPercent(value) {

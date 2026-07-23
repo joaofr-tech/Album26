@@ -1,4 +1,4 @@
-const CACHE_NAME = "fifa-world-cup-26-v8";
+const CACHE_NAME = "fifa-world-cup-26-v9";
 const APP_SHELL = [
   "./index.html",
   "./manifest.webmanifest",
@@ -10,6 +10,7 @@ const APP_SHELL = [
   "./src/js/app.js",
   "./src/js/collection.js",
   "./src/js/export.js",
+  "./src/js/match-list.js",
   "./src/js/parser.js",
   "./src/js/storage.js"
 ];
