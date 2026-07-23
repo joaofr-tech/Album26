@@ -376,3 +376,61 @@ PAN : 2, 4, 7, 8, 11, 16, 19
 - Se nenhuma figurinha da lista estiver faltando, o app informa que o usuario nao precisa de nenhuma figurinha daquela lista.
 - Conferir lista nao altera o progresso nem a colecao salva.
 - Registro por voz/texto, exportacao de faltantes e visualizacao continuam funcionando.
+
+## SPEC v4
+
+### Objetivo
+
+A v4 altera o formato de exportacao para o mesmo padrao estruturado usado em listas compartilhadas e adiciona exportacao das figurinhas possuidas.
+
+### Casos de uso
+
+- Exportar faltantes em uma mensagem pronta para WhatsApp, sem bandeiras.
+- Exportar possuidas em uma mensagem pronta para WhatsApp, sem bandeiras.
+- Compartilhar listas em formato facil de colar de volta no app via `Registrar` ou `Conferir lista`.
+
+### Formato de exportacao
+
+- Cada linha deve usar o padrao `<codigo da secao> : <numeros>`.
+- Exemplos de linhas validas: `FWC : 8`, `MEX : 1, 4`, `RSA : 17`, `KOR : 14, 16, 20` e `COCA-COLA : 12, 14`.
+- A exportacao nao deve incluir bandeiras.
+- A exportacao nao deve incluir nomes completos, porcentagens, totais por secao ou cabecalhos longos.
+- Os numeros devem ser explicitos e separados por virgula e espaco.
+- Sequencias nao devem ser compactadas em ranges; `1, 2, 3` nao deve virar `1-3`.
+- A ordem das secoes deve seguir a ordem do catalogo.
+
+### Exportar faltantes
+
+- O botao `Exportar faltantes` deve continuar existindo.
+- Ao clicar, o app calcula todas as figurinhas faltantes da colecao local.
+- A mensagem deve usar o formato estruturado da v4.
+- Se nao houver faltantes, informar que o album esta completo ou gerar mensagem equivalente.
+- A exportacao nao deve alterar a colecao.
+
+### Exportar possuidas
+
+- Adicionar um botao secundario `Exportar possuidas`.
+- Ao clicar, o app calcula todas as figurinhas possuidas da colecao local.
+- A mensagem deve usar o mesmo formato estruturado da exportacao de faltantes.
+- Se nao houver possuidas, informar que nenhuma figurinha possuida foi registrada ou gerar mensagem equivalente.
+- A exportacao nao deve alterar a colecao.
+
+### Dados e codigo das secoes
+
+- Selecoes devem usar a abreviacao preferencial do catalogo, como `MEX`, `RSA`, `KOR`, `BRA` e `USA`.
+- FWC deve usar `FWC`.
+- Coca-Cola deve usar `COCA-COLA` na exportacao, mesmo que `CC` continue aceito na entrada.
+- O exemplo `COCA-COLA : 12, 20` representa o formato; a implementacao deve exportar apenas numeros existentes no catalogo.
+
+### Criterios de aceite da v4
+
+- Faltantes com FWC 8 geram a linha `FWC : 8`.
+- Faltantes com Mexico 1 e 4 geram a linha `MEX : 1, 4`.
+- Faltantes com Coreia do Sul 14, 16 e 20 geram a linha `KOR : 14, 16, 20`.
+- Coca-Cola e exportada como `COCA-COLA : ...`.
+- Numeros consecutivos sao exportados explicitamente, por exemplo `BRA : 1, 2, 3`.
+- A mensagem de faltantes nao contem bandeiras, ranges, nomes completos ou cabecalho antigo `Figurinhas faltantes -`.
+- O app exibe `Exportar possuidas`.
+- Exportar possuidas abre WhatsApp com uma mensagem no mesmo padrao.
+- Exportar faltantes e exportar possuidas nao alteram a colecao salva.
+- Registro, conferencia de lista e exportacao para WhatsApp continuam funcionando.

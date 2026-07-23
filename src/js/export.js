@@ -1,15 +1,23 @@
 import { allStickerRows } from "./collection.js";
 
-export function missingStickerGroups(albumIndex, collection) {
+export function stickerGroupsByOwnership(albumIndex, collection, owned) {
   const groupsBySection = new Map();
 
   for (const row of allStickerRows(albumIndex, collection)) {
-    if (row.owned) continue;
+    if (row.owned !== owned) continue;
     if (!groupsBySection.has(row.section.id)) groupsBySection.set(row.section.id, { section: row.section, numbers: [] });
     groupsBySection.get(row.section.id).numbers.push(row.sticker.number);
   }
 
   return [...groupsBySection.values()];
+}
+
+export function missingStickerGroups(albumIndex, collection) {
+  return stickerGroupsByOwnership(albumIndex, collection, false);
+}
+
+export function ownedStickerGroups(albumIndex, collection) {
+  return stickerGroupsByOwnership(albumIndex, collection, true);
 }
 
 export function formatNumberRanges(numbers) {
@@ -35,36 +43,55 @@ export function formatNumberRanges(numbers) {
   return ranges.join(", ");
 }
 
+export function formatExplicitNumbers(numbers) {
+  return [...numbers].sort((left, right) => left - right).join(", ");
+}
+
+export function sectionExportCode(section) {
+  if (section.exportCode) return section.exportCode;
+  if (section.id === "coca-cola") return "COCA-COLA";
+
+  const aliases = [section.name, section.id, ...(section.aliases || [])];
+  const preferred = aliases.find((alias) => /^[A-Z0-9]{2,4}$/.test(alias));
+  if (preferred) return preferred;
+
+  return section.id.toUpperCase();
+}
+
+export function formatStickerGroupsMessage(groups, emptyMessage) {
+  if (groups.length === 0) return emptyMessage;
+  return groups.map((group) => `${sectionExportCode(group.section)} : ${formatExplicitNumbers(group.numbers)}`).join("\n");
+}
+
 export function formatMissingStickersMessage(albumIndex, collection) {
-  const groups = missingStickerGroups(albumIndex, collection);
-  const total = groups.reduce((sum, group) => sum + group.numbers.length, 0);
+  return formatStickerGroupsMessage(missingStickerGroups(albumIndex, collection), `Album completo - ${albumIndex.album.name}`);
+}
 
-  if (total === 0) return `Album completo - ${albumIndex.album.name}`;
-
-  return [
-    `Figurinhas faltantes - ${albumIndex.album.name}`,
-    "",
-    ...groups.map((group) => `${group.section.name}: ${formatNumberRanges(group.numbers)}`),
-    "",
-    `Total: ${total} faltantes`
-  ].join("\n");
+export function formatOwnedStickersMessage(albumIndex, collection) {
+  return formatStickerGroupsMessage(ownedStickerGroups(albumIndex, collection), `Nenhuma figurinha possuida - ${albumIndex.album.name}`);
 }
 
 export function buildWhatsAppShareUrl(message) {
   return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }
 
-export function missingStickersShare(albumIndex, collection) {
-  const groups = missingStickerGroups(albumIndex, collection);
-  const total = groups.reduce((sum, group) => sum + group.numbers.length, 0);
-  const message = formatMissingStickersMessage(albumIndex, collection);
-
+function stickerShare(groups, message) {
   return {
     groups,
-    total,
+    total: groups.reduce((sum, group) => sum + group.numbers.length, 0),
     message,
     url: buildWhatsAppShareUrl(message)
   };
+}
+
+export function missingStickersShare(albumIndex, collection) {
+  const groups = missingStickerGroups(albumIndex, collection);
+  return stickerShare(groups, formatStickerGroupsMessage(groups, `Album completo - ${albumIndex.album.name}`));
+}
+
+export function ownedStickersShare(albumIndex, collection) {
+  const groups = ownedStickerGroups(albumIndex, collection);
+  return stickerShare(groups, formatStickerGroupsMessage(groups, `Nenhuma figurinha possuida - ${albumIndex.album.name}`));
 }
 
 function formatRange(start, end) {

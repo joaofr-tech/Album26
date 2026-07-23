@@ -1,5 +1,5 @@
 import { applyParsedCommands, isOwned, progressBySection, progressForAlbum, toggleOwned } from "./collection.js";
-import { missingStickersShare } from "./export.js";
+import { missingStickersShare, ownedStickersShare } from "./export.js";
 import { neededStickersResultRows, matchNeededStickers } from "./match-list.js";
 import { buildAlbumIndex, parseStickerCommands } from "./parser.js";
 import { loadCollection, saveCollection } from "./storage.js";
@@ -10,6 +10,7 @@ const elements = {
   entryForm: document.querySelector("#entryForm"),
   commandInput: document.querySelector("#commandInput"),
   exportMissingButton: document.querySelector("#exportMissingButton"),
+  exportOwnedButton: document.querySelector("#exportOwnedButton"),
   checkListToggleButton: document.querySelector("#checkListToggleButton"),
   checkListForm: document.querySelector("#checkListForm"),
   checkListInput: document.querySelector("#checkListInput"),
@@ -37,6 +38,7 @@ async function init() {
   elements.albumName.textContent = albumIndex.album.name;
   elements.entryForm.addEventListener("submit", handleRegister);
   elements.exportMissingButton.addEventListener("click", handleExportMissing);
+  elements.exportOwnedButton.addEventListener("click", handleExportOwned);
   elements.checkListToggleButton.addEventListener("click", handleCheckListToggle);
   elements.checkListForm.addEventListener("submit", handleCheckListSubmit);
   elements.detailBackButton.addEventListener("click", showHome);
@@ -69,6 +71,17 @@ function handleExportMissing() {
   }
 
   renderResults([{ status: "manual", message: `${share.total} figurinhas faltantes prontas para enviar no WhatsApp.` }]);
+  window.location.href = share.url;
+}
+
+function handleExportOwned() {
+  const share = ownedStickersShare(albumIndex, collection);
+  if (share.total === 0) {
+    renderResults([{ status: "manual", message: "Nenhuma figurinha possuida para exportar." }]);
+    return;
+  }
+
+  renderResults([{ status: "manual", message: `${share.total} figurinhas possuidas prontas para enviar no WhatsApp.` }]);
   window.location.href = share.url;
 }
 

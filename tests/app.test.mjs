@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { applyParsedCommands, createEmptyCollection, isOwned, migrateLegacyCollection, progressForAlbum, toggleOwned } from "../src/js/collection.js";
-import { buildWhatsAppShareUrl, formatMissingStickersMessage, formatNumberRanges, missingStickerGroups, missingStickersShare } from "../src/js/export.js";
+import { buildWhatsAppShareUrl, formatMissingStickersMessage, formatNumberRanges, missingStickerGroups, missingStickersShare, ownedStickersShare } from "../src/js/export.js";
 import { buildAlbumIndex, parseStickerCommands } from "../src/js/parser.js";
 import { expectedIdsFromGroups, expectedTotal, sharedListCase1, sharedListCase1Expected, sharedListCase2, sharedListCase2Expected } from "./fixtures.mjs";
 
@@ -111,31 +111,95 @@ test("calcula figurinhas faltantes agrupadas por selecao", () => {
 test("compacta sequencias de numeros faltantes", () => {
   assert.equal(formatNumberRanges([1, 2, 3, 5, 7, 8]), "1-3, 5, 7-8");
 });
-test("formata mensagem de figurinhas faltantes para compartilhamento", () => {
+test("formata mensagem de figurinhas faltantes no padrao v4", () => {
   const collection = {
     ...createEmptyCollection(album.id),
     ownedStickerIds: [...albumIndex.stickersById.keys()].filter((id) => id !== "brasil-1" && id !== "argentina-5")
   };
   const message = formatMissingStickersMessage(albumIndex, collection);
 
-  assert.equal(message.includes("Figurinhas faltantes - FIFA World Cup 26"), true);
-  assert.equal(message.includes("Brasil: 1"), true);
-  assert.equal(message.includes("Argentina: 5"), true);
-  assert.equal(message.includes("Total: 2 faltantes"), true);
+  assert.equal(message.includes("BRA : 1"), true);
+  assert.equal(message.includes("ARG : 5"), true);
+  assert.equal(message.includes("Figurinhas faltantes - FIFA World Cup 26"), false);
+  assert.equal(message.includes("Total: 2 faltantes"), false);
 });
 
+test("formata faltantes no padrao estruturado da v4", () => {
+  const missingIds = [
+    "fwc-8",
+    "mexico-1",
+    "mexico-4",
+    "africa-do-sul-17",
+    "coreia-do-sul-14",
+    "coreia-do-sul-16",
+    "coreia-do-sul-20",
+    "coca-cola-12",
+    "coca-cola-14"
+  ];
+  const collection = {
+    ...createEmptyCollection(album.id),
+    ownedStickerIds: [...albumIndex.stickersById.keys()].filter((id) => !missingIds.includes(id))
+  };
+  const share = missingStickersShare(albumIndex, collection);
+
+  assert.equal(share.total, missingIds.length);
+  assert.equal(share.message.includes("FWC : 8"), true);
+  assert.equal(share.message.includes("MEX : 1, 4"), true);
+  assert.equal(share.message.includes("RSA : 17"), true);
+  assert.equal(share.message.includes("KOR : 14, 16, 20"), true);
+  assert.equal(share.message.includes("COCA-COLA : 12, 14"), true);
+  assert.equal(share.message.includes("🇧🇷"), false);
+  assert.equal(share.message.includes("Coreia do Sul"), false);
+  assert.equal(share.message.includes("1-4"), false);
+  assert.equal(share.url, buildWhatsAppShareUrl(share.message));
+});
+
+test("exporta possuidas no mesmo padrao estruturado da v4", () => {
+  const ownedIds = [
+    "fwc-8",
+    "mexico-1",
+    "mexico-4",
+    "africa-do-sul-17",
+    "coreia-do-sul-14",
+    "coreia-do-sul-16",
+    "coreia-do-sul-20",
+    "coca-cola-12",
+    "coca-cola-14"
+  ];
+  const collection = { ...createEmptyCollection(album.id), ownedStickerIds: ownedIds };
+  const share = ownedStickersShare(albumIndex, collection);
+
+  assert.equal(share.total, ownedIds.length);
+  assert.equal(share.message.includes("FWC : 8"), true);
+  assert.equal(share.message.includes("MEX : 1, 4"), true);
+  assert.equal(share.message.includes("RSA : 17"), true);
+  assert.equal(share.message.includes("KOR : 14, 16, 20"), true);
+  assert.equal(share.message.includes("COCA-COLA : 12, 14"), true);
+  assert.equal(share.message.includes("🇧🇷"), false);
+  assert.equal(share.message.includes("Coreia do Sul"), false);
+  assert.equal(share.message.includes("1-4"), false);
+  assert.equal(share.url, buildWhatsAppShareUrl(share.message));
+});
+
+test("informa quando nao ha figurinhas possuidas para exportar", () => {
+  const share = ownedStickersShare(albumIndex, createEmptyCollection(album.id));
+
+  assert.equal(share.total, 0);
+  assert.equal(share.message, "Nenhuma figurinha possuida - FIFA World Cup 26");
+});
 test("gera link do WhatsApp com mensagem codificada", () => {
   const url = buildWhatsAppShareUrl("Brasil: 1, 2\nTotal: 2 faltantes");
 
   assert.equal(url, "https://wa.me/?text=Brasil%3A%201%2C%202%0ATotal%3A%202%20faltantes");
 });
 
-test("mantem link do WhatsApp compacto quando ha muitas faltantes", () => {
+test("gera link do WhatsApp com todas as faltantes no padrao v4", () => {
   const share = missingStickersShare(albumIndex, createEmptyCollection(album.id));
 
   assert.equal(share.total, 994);
-  assert.equal(share.message.includes("Brasil: 1-20"), true);
-  assert.equal(share.url.length < 4000, true);
+  assert.equal(share.message.includes("BRA : 1, 2, 3"), true);
+  assert.equal(share.message.includes("Brasil: 1-20"), false);
+  assert.equal(share.url, buildWhatsAppShareUrl(share.message));
 });
 test("informa album completo quando nao ha faltantes", () => {
   const collection = { ...createEmptyCollection(album.id), ownedStickerIds: [...albumIndex.stickersById.keys()] };
