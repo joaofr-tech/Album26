@@ -1,3 +1,5 @@
+import { looksLikeStructuredStickerList, parseStructuredStickerList } from "./structured-list.js";
+
 const AUXILIARY_WORDS = new Set([
   "figurinha",
   "figurinhas",
@@ -209,7 +211,25 @@ function isIgnorable(token) {
   return token.type === "separator" || (token.type === "word" && (AUXILIARY_WORDS.has(token.value) || token.value === "e" || token.value === "h"));
 }
 
+function structuredItemsToCommands(parsed) {
+  return [
+    ...parsed.items.map((item) => ({
+      status: "valid",
+      raw: item.raw,
+      section: item.section,
+      number: item.number,
+      sticker: item.sticker,
+      message: `${item.section.name} ${item.number}`
+    })),
+    ...parsed.warnings
+  ];
+}
+
 export function parseStickerCommands(input, albumIndex) {
+  if (looksLikeStructuredStickerList(input, albumIndex)) {
+    const parsed = parseStructuredStickerList(input, albumIndex);
+    if (parsed.items.length > 0 || parsed.warnings.length > 0) return structuredItemsToCommands(parsed);
+  }
   const tokens = tokenizeInput(input, albumIndex.maxNumber);
   const results = [];
   let activeSection = null;

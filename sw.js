@@ -1,4 +1,4 @@
-const CACHE_NAME = "fifa-world-cup-26-v9";
+const CACHE_NAME = "fifa-world-cup-26-v10";
 const APP_SHELL = [
   "./index.html",
   "./manifest.webmanifest",
@@ -12,7 +12,8 @@ const APP_SHELL = [
   "./src/js/export.js",
   "./src/js/match-list.js",
   "./src/js/parser.js",
-  "./src/js/storage.js"
+  "./src/js/storage.js",
+  "./src/js/structured-list.js"
 ];
 
 self.addEventListener("install", (event) => {

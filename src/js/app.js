@@ -162,7 +162,7 @@ function renderResults(results = []) {
 }
 
 function isExtraSection(section) {
-  return ["fwc", "coca-cola", "especiais", "intro"].includes(section.id);
+  return ["fwc", "coca-cola"].includes(section.id);
 }
 
 function formatPercent(value) {

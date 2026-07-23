@@ -385,6 +385,9 @@
       "numberRange": [
         1,
         20
+      ],
+      "checklistAliases": [
+        "MAR"
       ]
     },
     {
@@ -631,8 +634,8 @@
         "world cup"
       ],
       "numberRange": [
-        1,
-        20
+        0,
+        19
       ]
     },
     {
@@ -646,31 +649,6 @@
       "numberRange": [
         1,
         14
-      ]
-    },
-    {
-      "id": "especiais",
-      "name": "Especiais",
-      "aliases": [
-        "especiais",
-        "especial",
-        "SPC"
-      ],
-      "numberRange": [
-        1,
-        19
-      ]
-    },
-    {
-      "id": "intro",
-      "name": "Introdução",
-      "aliases": [
-        "introducao",
-        "intro",
-        "INT"
-      ],
-      "numbers": [
-        0
       ]
     }
   ]

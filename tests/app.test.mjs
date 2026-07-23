@@ -4,6 +4,7 @@ import test from "node:test";
 import { applyParsedCommands, createEmptyCollection, isOwned, migrateLegacyCollection, progressForAlbum, toggleOwned } from "../src/js/collection.js";
 import { buildWhatsAppShareUrl, formatMissingStickersMessage, formatNumberRanges, missingStickerGroups, missingStickersShare } from "../src/js/export.js";
 import { buildAlbumIndex, parseStickerCommands } from "../src/js/parser.js";
+import { expectedIdsFromGroups, expectedTotal, sharedListCase1, sharedListCase1Expected, sharedListCase2, sharedListCase2Expected } from "./fixtures.mjs";
 
 const album = JSON.parse(await readFile(new URL("../src/data/album.json", import.meta.url), "utf8"));
 const albumIndex = buildAlbumIndex(album);
@@ -15,6 +16,21 @@ test("registra uma figurinha como possuida", () => {
   assert.equal(result.results[0].status, "added");
 });
 
+test("registra o caso 1 completo de lista compartilhada", () => {
+  const result = register(createEmptyCollection(album.id), sharedListCase1);
+
+  for (const id of expectedIdsFromGroups(sharedListCase1Expected)) assert.equal(isOwned(result.collection, id), true);
+  assert.equal(result.results.filter((item) => item.status === "added").length, expectedTotal(sharedListCase1Expected));
+  assert.equal(result.results.some((item) => item.status !== "added"), false);
+});
+
+test("registra o caso 2 completo de faltantes com dois-pontos", () => {
+  const result = register(createEmptyCollection(album.id), sharedListCase2);
+
+  for (const id of expectedIdsFromGroups(sharedListCase2Expected)) assert.equal(isOwned(result.collection, id), true);
+  assert.equal(result.results.filter((item) => item.status === "added").length, expectedTotal(sharedListCase2Expected));
+  assert.equal(result.results.some((item) => item.status !== "added"), false);
+});
 test("nao registra repetidas", () => {
   const first = register(createEmptyCollection(album.id), "Brasil 12");
   const second = register(first.collection, "Brasil 12");
@@ -72,7 +88,7 @@ test("calcula o progresso sem repetidas", () => {
   const collection = register(createEmptyCollection(album.id), "Brasil 12, Brasil 15").collection;
   const progress = progressForAlbum(albumIndex, collection);
   assert.equal(progress.owned, 2);
-  assert.equal(progress.total, 1014);
+  assert.equal(progress.total, 994);
   assert.equal("duplicates" in progress, false);
 });
 
@@ -117,7 +133,7 @@ test("gera link do WhatsApp com mensagem codificada", () => {
 test("mantem link do WhatsApp compacto quando ha muitas faltantes", () => {
   const share = missingStickersShare(albumIndex, createEmptyCollection(album.id));
 
-  assert.equal(share.total, 1014);
+  assert.equal(share.total, 994);
   assert.equal(share.message.includes("Brasil: 1-20"), true);
   assert.equal(share.url.length < 4000, true);
 });
