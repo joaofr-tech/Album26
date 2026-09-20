@@ -128,6 +128,7 @@ function render() {
   const showingDetail = Boolean(selectedSectionId);
   elements.homeView.hidden = showingDetail;
   elements.detailView.hidden = !showingDetail;
+  document.body.classList.toggle("showing-detail", showingDetail);
   renderProgress();
   renderSectionCards();
   if (showingDetail) renderDetail();
