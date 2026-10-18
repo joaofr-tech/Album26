@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#166534" />
+    <meta name="theme-color" content="#166534" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
     <meta name="description" content="Controle simples de figurinhas da FIFA World Cup 26 por ditado." />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
@@ -14,35 +15,72 @@
   </head>
   <body>
     <div class="app-shell">
-      <header class="topbar"><p>Album de figurinhas</p><h1 id="albumName">FIFA World Cup 26</h1></header>
+      <header class="topbar">
+        <div class="topbar-content">
+          <p class="topbar-tag">Álbum de Figurinhas</p>
+          <h1 id="albumName">FIFA World Cup 26</h1>
+        </div>
+      </header>
       <main class="main-layout">
         <aside class="sidebar-panel">
           <section class="register-panel" aria-labelledby="registerTitle">
             <div class="progress-summary" id="progressSummary" aria-live="polite"></div>
             <form id="entryForm">
-              <label id="registerTitle" for="commandInput">Fale ou digite as figurinhas</label>
-              <textarea id="commandInput" name="commands" rows="3" autocomplete="off" autocapitalize="sentences" placeholder="Brasil 12, Argentina 8, Fran&ccedil;a 20"></textarea>
-              <button class="primary-action" type="submit">Registrar</button>
-              <button class="secondary-action" id="exportMissingButton" type="button">Exportar faltantes</button>
-              <button class="secondary-action" id="exportOwnedButton" type="button">Exportar possuidas</button>
-              <button class="secondary-action" id="checkListToggleButton" type="button">Conferir lista</button>
+              <div class="field-header">
+                <label id="registerTitle" for="commandInput">Fale ou digite as figurinhas</label>
+                <span class="field-hint">Dite pelo microfone do teclado</span>
+              </div>
+              <textarea id="commandInput" name="commands" rows="3" autocomplete="off" autocapitalize="sentences" placeholder="Ex: Brasil 12, Argentina 8, França 20..."></textarea>
+              <button class="primary-action" type="submit">
+                <span>Registrar</span>
+              </button>
+              <div class="action-buttons-group">
+                <button class="secondary-action" id="exportMissingButton" type="button">Exportar faltantes</button>
+                <button class="secondary-action" id="exportOwnedButton" type="button">Exportar possuídas</button>
+                <button class="secondary-action" id="checkListToggleButton" type="button" aria-expanded="false">Conferir lista</button>
+              </div>
             </form>
             <form class="check-list-form" id="checkListForm" hidden>
-              <label for="checkListInput">Lista para conferir</label>
-              <textarea id="checkListInput" name="checklist" rows="4" autocomplete="off" autocapitalize="characters" placeholder="BRA 12, 14 15&#10;CC 1, 2"></textarea>
-              <button class="secondary-action" type="submit">Verificar lista</button>
+              <div class="field-header">
+                <label for="checkListInput">Lista para conferir</label>
+                <span class="field-hint">Cole a lista de um amigo</span>
+              </div>
+              <textarea id="checkListInput" name="checklist" rows="3" autocomplete="off" autocapitalize="characters" placeholder="BRA 12, 14 15&#10;CC 1, 2"></textarea>
+              <button class="secondary-action check-submit-action" type="submit">Verificar lista</button>
             </form>
             <div class="result-panel" id="resultPanel" aria-live="polite"></div>
           </section>
         </aside>
         <div class="content-panel">
           <section id="homeView">
-            <section class="cards-section" aria-labelledby="teamsTitle"><h2 id="teamsTitle">Sele&ccedil;&otilde;es</h2><div class="section-cards" id="selectionCards"></div></section>
-            <section class="cards-section" id="extrasSection" aria-labelledby="extrasTitle" hidden><h2 id="extrasTitle">Outras figurinhas</h2><div class="section-cards" id="extraCards"></div></section>
+            <section class="cards-section" aria-labelledby="teamsTitle">
+              <div class="section-header">
+                <h2 id="teamsTitle">Seleções</h2>
+              </div>
+              <div class="section-cards" id="selectionCards"></div>
+            </section>
+            <section class="cards-section" id="extrasSection" aria-labelledby="extrasTitle" hidden>
+              <div class="section-header">
+                <h2 id="extrasTitle">Outras figurinhas</h2>
+              </div>
+              <div class="section-cards" id="extraCards"></div>
+            </section>
           </section>
           <section id="detailView" hidden aria-labelledby="detailTitle">
-            <button class="back-button" id="detailBackButton" type="button">&larr; Sele&ccedil;&otilde;es</button>
-            <div class="detail-heading"><div><p id="detailProgress"></p><h2 id="detailTitle"></h2></div><span class="legend"><i class="owned-dot"></i> Possu&iacute;da <i class="missing-dot"></i> Faltante</span></div>
+            <button class="back-button" id="detailBackButton" type="button">
+              <span class="back-arrow" aria-hidden="true">←</span>
+              <span>Seleções</span>
+            </button>
+            <div class="detail-heading">
+              <div class="detail-info">
+                <p id="detailProgress"></p>
+                <h2 id="detailTitle"></h2>
+              </div>
+              <div class="legend">
+                <span class="legend-item"><i class="owned-dot"></i> Possuída</span>
+                <span class="legend-item"><i class="missing-dot"></i> Faltante</span>
+              </div>
+            </div>
             <div class="sticker-grid" id="stickerGrid"></div>
           </section>
         </div>

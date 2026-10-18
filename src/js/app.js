@@ -136,7 +136,18 @@ function render() {
 
 function renderProgress() {
   const progress = progressForAlbum(albumIndex, collection);
-  elements.progressSummary.innerHTML = `<strong>${progress.owned} de ${progress.total}</strong><span>${formatPercent(progress.percent)} completo</span>`;
+  elements.progressSummary.innerHTML = `
+    <div class="progress-meta">
+      <div class="progress-numbers">
+        <span class="progress-title">Progresso Geral</span>
+        <strong>${progress.owned} <small>de ${progress.total}</small></strong>
+      </div>
+      <span class="progress-badge">${formatPercent(progress.percent)}</span>
+    </div>
+    <div class="progress-track" role="progressbar" aria-valuenow="${Math.round(progress.percent)}" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do álbum">
+      <div class="progress-fill" style="width: ${progress.percent}%"></div>
+    </div>
+  `;
 }
 
 function renderSectionCards() {
@@ -150,28 +161,47 @@ function renderSectionCards() {
 }
 
 function renderSectionCard({ section, owned, total, percent }) {
-  return `<button class="section-card" type="button" data-section-id="${section.id}" aria-label="Abrir ${section.name}"><span>${section.name}</span><strong>${owned} / ${total}</strong><small>${formatPercent(percent)}</small></button>`;
+  const isComplete = owned === total && total > 0;
+  return `
+    <button class="section-card ${isComplete ? "is-complete" : ""}" type="button" data-section-id="${section.id}" aria-label="Abrir ${section.name}">
+      <div class="card-head">
+        <span class="card-title">${section.name}</span>
+        ${isComplete ? '<span class="card-badge" title="Completa" aria-label="Completa">✓</span>' : ""}
+      </div>
+      <div class="card-stats">
+        <strong>${owned} <small>/ ${total}</small></strong>
+        <span class="card-percent">${formatPercent(percent)}</span>
+      </div>
+      <div class="card-track" aria-hidden="true">
+        <div class="card-fill" style="width: ${percent}%"></div>
+      </div>
+    </button>
+  `;
 }
 
 function renderDetail() {
   const section = albumIndex.sections.get(selectedSectionId);
   if (!section) return showHome();
   const owned = section.stickers.filter((sticker) => isOwned(collection, sticker.id)).length;
+  const total = section.stickers.length;
+  const percent = total > 0 ? (owned / total) * 100 : 0;
   elements.detailTitle.textContent = section.name;
-  elements.detailProgress.textContent = `${owned} de ${section.stickers.length} possuidas`;
+  elements.detailProgress.textContent = `${owned} de ${total} possuídas (${formatPercent(percent)})`;
   elements.stickerGrid.innerHTML = section.stickers.map((sticker) => {
     const ownedSticker = isOwned(collection, sticker.id);
     const state = ownedSticker ? "owned" : "missing";
-    const label = ownedSticker ? "possuida" : "faltante";
-    return `<button class="sticker-number ${state}" type="button" data-sticker-id="${sticker.id}" aria-pressed="${ownedSticker}" aria-label="${section.name} ${sticker.number}, ${label}"><span>${sticker.number}</span><b aria-hidden="true">${ownedSticker ? "?" : ""}</b></button>`;
+    const label = ownedSticker ? "possuída" : "faltante";
+    return `<button class="sticker-number ${state}" type="button" data-sticker-id="${sticker.id}" aria-pressed="${ownedSticker}" aria-label="${section.name} ${sticker.number}, ${label}"><span class="sticker-num">${sticker.number}</span><span class="sticker-check" aria-hidden="true">${ownedSticker ? "✓" : ""}</span></button>`;
   }).join("");
   elements.stickerGrid.querySelectorAll("[data-sticker-id]").forEach((button) => button.addEventListener("click", () => toggleSticker(button.dataset.stickerId)));
 }
 
 function renderResults(results = []) {
   elements.resultPanel.innerHTML = results.map((result) => {
-    const tone = ["added", "already-owned", "manual"].includes(result.status) ? "ok" : "warn";
-    return `<p class="${tone}">${result.message}</p>`;
+    const isSuccess = ["added", "already-owned", "manual"].includes(result.status);
+    const tone = isSuccess ? "ok" : "warn";
+    const icon = isSuccess ? "✓" : "!";
+    return `<p class="${tone}"><span class="result-badge" aria-hidden="true">${icon}</span><span class="result-text">${result.message}</span></p>`;
   }).join("");
 }
 
